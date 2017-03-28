@@ -1,14 +1,16 @@
-\documentclass[letterpaper,twoside,onecolumn,report]{memoir}
+\documentclass[letterpaper,twoside,onecolumn,article]{memoir}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage{geometry}
 \usepackage{graphicx}
 \usepackage{xcolor}
+\usepackage{xspace}
 
 \counterwithout{section}{chapter}
 \setcounter{tocdepth}{2}
 \setcounter{secnumdepth}{2}
 \newcommand{\fixme}[1]{\textcolor{red}{\textit{#1}}}
+\newcommand{\pD}{pD/SP\xspace}
 
 \title{Rosetta Technote: protoDUNE Numbering Conventions}
 \date{}
@@ -25,168 +27,360 @@
 \tableofcontents
 \clearpage
 
-\section{Introduction}
-
-This document describes the conventions used to form
-\textit{identifiers} for the \textit{elements} that make up the
-single-phase protoDUNE (pD) experiment.  The main goal is to collect
-existing conventions for \textit{physical} identifiers (see
-section~\ref{sec:physlog}) and assert a common \textit{logical}
-convention (again see section~\ref{sec:physlog}) which can be followed
-by a large fraction of the experiment's \textit{domains}.
-
-Experiment \textit{elements}, here, are atomic parts of the experiment
-(eg, one sense wire segment) or are aggregations of elements (eg, one
-contiguous sense wire conductor).  Different groups within the DUNE
-collaboration develop their own conventions which cover their
-particular \textit{convention domain}.  Domains may overlap between
-groups and inconsistent conventions may evolve to cover these
-overlaps.  
-
-\subsection{Physical and Logical Identifiers}
-\label{sec:physlog}
-
-Identifiers, here, are concise numerical or alpha-numerical labels
-given to elements of the experiment apparatus.  They are classified
-into two distinct categories which are called here \textit{physical}
-and \textit{logical} identifiers.  They are distinguished as:
-\begin{description}
-\item[physical identifiers] label each produced instance of some type
-  of element.
-
-\item[logical identifier] label a location or ``niche'' at which
-  physical elements are placed in the experiment. 
-\end{description}
-
-\textit{Physical identifiers} are typically in the form of a serial
-number or otherwise unique identifier assigned to each manufactured
-part (or aggregation).  A physical identifier is uniquely determined
-by the domain that produced them.  Eg, it is assumed that will there
-never be more than one serial number assigned to a given physical
-element.  Elements which are aggregates of other elements should
-ideally be given physical identifiers that uniquely represent their
-aggregation.  If an aggregate has an element replaced then the result
-should be considered a uniquely new aggregate.  
-
-\textit{Logical identifiers} indicate a ``niche'' or a ``role'' in the
-detector which a physical element supplies.  A niche has a conceptual
-location in the experiment.  This may be known in absolute terms (eg,
-the most upstream APA on the right side of the beam) or in relative
-terms (eg, wire segment 4 is next to wire segment 3).  An aggregate of
-niches can itself be identified.  A conductor is composed of multiple
-wire segments and an FEMB has multiple ASICs.  In most cases there
-exists an \textit{array} of niches of common type (``wire segments in
-a plane'' or ``channels in an ADC'').  In such cases it is desired to
-produce a logical identifier which expresses an individual niche as
-label identifying the array and an offset into that array (eg, ``U
-wire 42'').  Ideally this offset is 1-based so that 0 may be reserved
-to indicate an error.  However, for some this 1-base can lead to
-confusion in software and is already in conflict with some established
-conventions and so 0-based array offsets are used.
-
-\subsection{Associations}
-
-While a physical identifier is (ideally) uniquely determined by the
-domain that fabricates it, a logical identifier may differ among the
-domains that must refer to it.  Even within one domain, identifiers
-may differ over time (eg, different versions of detector geometry used
-in simulations).  Giving explicit identifiers being assigned to
-physical or logical aggregates, each set of identifiers can be
-organized into a hierarchy.  As physical elements are installed into
-logical niches a mapping between a physical hierarchy and any given
-logical hierarchy is formed.  This mapping must be traversed in both
-directions.  And, this mapping must evolve during installation and
-potentially later if parts fail or are otherwise replaced.
-
-Besides aggregation (``this WIB is in this WIEC''), logical
-identifiers may be associated through \textit{connectivity}.
-Connectivity can be between elements of the same type (``this APA is
-adjacent to this other APA'') and elements of different types (``this
-wire conductor is connected to this FE ASIC channel'').
-
-Both physical and logical identifiers have associated information.
-Physical identifiers can have associated performance or QA/QC
-parameters.  Logical identifiers can have associated quantities giving
-the location and extent taken by the physical part.
-
-These associated parameters may change over time and between domains.
-Maintaining these associations is important but is not considered part
-of the scope for the identifier conventions themselves.
-
-\section{Common Logical Numbering Convention}
-\label{sec:onering}
-
-Write this section once enough from the domains are known.  But, it
-will probably draw heavily from what LArSoft does now.
-
-Include table of as-designed multiplicities (asic per femb, channel per asic, etc).
 
 
-\section{Domain Conventions}
-
-As described above, this note assumes one can segment the problem into
-\textit{convention domains}. 
-This document is restricted to a subset of all domain conventions
-that are relevant to the analysis of the experiment data and for
-communicating with domain experts any issues that may be found in the
-course of analyzing the experiment data.  Experiment data, for the
-purposes of this note, consists of that directly acquired by the
-detector DAQ, the simulation of this data as well as any acquired
-through quality assurance (QA) and control (QC) processes (eg cold
-electronics testing).
-
-Ideally, a domain is responsible for assigning a globally unique
-\textit{physical} identifier to each part (including an aggregation)
-that it produces.  However, it is possible for parts to be passed
-between domains for further aggregation and new physical identifiers
-invented and assigned.  This becomes a bookkeeping challenge for the
-domains involved if or when there is a need to communicate issues back
-to the originating domain.
-
-Any domain may develop its own convention for \textit{logical}
-identifiers although it is desirable, and the goal of this note, to
-minimize this variability.
-
-The remaining part of this section collects the conventions relevant
-to some domains and how they relate to the common convention.
-
-\subsection{Engineering}
-\label{sec:eng}
-
-
-
-\subsection{Quality Assurance and Control}
-\label{sec:qaqc}
-
-\subsection{Construction and Installation}
-\label{sec:inst}
-
-\subsection{Slow Control}
-\label{sec:slow}
-
-\subsection{Electronics}
-\label{sec:elec}
-
-\subsection{DAQ}
-\label{sec:daq}
-
-Includes TPC, PDS, TI, CR fragments and oob BI.  Starts with BR, ends
-with EB and writing out a raw file.
-
-\subsection{Offline}
-\label{sec:offline}
-
-Simulation and Geometry.  LArSoft data products.  Offline databases?
-
-\subsubsection{LArSoft}
-
+\section{Todo}
 \begin{itemize}
-\item protoDUNE-SP Geometry coordinate system, CPA/APA/TPC/wires \href{https://cdcvs.fnal.gov/redmine/projects/dunetpc/wiki/DUNE_Geometries#ProtoDUNE-SP-Geometry}{(link)}
+\item \fixme{discuss more multi-dimensional identifiers vs. flat, global numbering.}
+\item \fixme{list and name the different conventions presented.}
+\item \fixme{discuss strategy of reserving the number zero.}
+\item \fixme{factor out narrative from convention definition.}
+\item \fixme{factor out coordinate systems into one section.} 
 \end{itemize}
 
-\section{Implementation Issues}
-\label{sec:impl}
+More ``fixmes'' are scattered throughout the text.
 
-What work needs to be done.
+\section{Introduction}
+
+This document describes the conventions used to form, typically
+numerical, \textit{identifiers} for the \textit{elements} that make up
+the single-phase protoDUNE (\pD) experiment.  Specifically, identifiers
+for the location or ``niche'' of elements in the in-situ and
+as-designed detector are developed.  These locations are ideal (eg,
+uniform wire pitch) and sometimes logical (eg, $4^{th}$ ADC on a
+FEMB).  Serial numbering conventions of actual instances of elements
+is not considered.
+
+It is assumed that the convention described hee will be used by
+analyzers of data in an offline software context.  As such, it is
+expected that the raw data files from the DAQ and subsequent derived
+files will follow this convention.  As such, the convention is
+developed to adhere, where applicable, to that used by the producers
+of the raw data.  A secondary goal of this document is to relate the
+convention to any others used by other DUNE groups in order to
+facilitate communication between them and the offline analysis
+efforts.
+
+The remaining sections of this document are cover the major subsystems
+of \pD: the time projection chamber (TPC), the photon detection system
+(PDS) and the trigger information (TI) system including beam and
+cosmic particle sources.  Finally, the labeling applied by the DAQ
+as it writes the raw data to file is described.
+
+\section{\pD Overview and Coordinates}
+
+\fixme{Add table summarizing quantities.}
+
+\fixme{Add origin.}
+
+This section gives an overview of \pD in order to define the terms
+used in this document and to illustrate the coordinate system used to
+describe the physical locations.
+
+Figure~\ref{fig:protodune} shows a high level illustration of the
+major elements of \pD and the \textit{external coordinate system}.
+The $Z_{ext}$ direction runs the length of \pD and is in the direction
+of the major component of the beam direction.  $Y_{ext}$ is upward
+against the force of gravity and $X_{ext}$ follows from the
+right-handed cross product of $X_{ext} \times Y_{ext} = Z_{ext}$.
+
+\begin{figure}[h]
+  \centering
+  \fixme{Find or make figure}
+  \caption{Major elements of \pD and the convention for the \textit{external coordinate system}.}
+  \label{fig:protodune}
+\end{figure}
+
+
+\fixme{Add comparison to LArSoft's current coordinate system.}
+
+
+Todo:
+\begin{itemize}
+\item wires and conductors
+\item G, U, V and W wire plane designations.
+\item PDS.
+\item Beam.
+\item CR.
+\end{itemize}
+
+\section{TPC Numbering Convention}
+
+This section describes the numbering convention covering the TPC data.
+It is described in terms of two different but related views: wire and
+channel where one can consider the flow of information about activity
+in the detector to flow into wires and out of channels.  In that same
+order, the wire-related elements are:
+
+\begin{description}
+\item[wire segment] (or as a noun simply \textbf{wire}), is a straight
+  conductor that runs across one face of one APA with at a given angle
+  measured w.r.t. the vertical ($Y_{ext}$).  The multiplicity of wires
+  is described below.
+\item[wire conductor] or simply \textbf{conductor}, one, two or three
+  wires may be connected through a trace on an edge board strip to
+  form a longer conductor which then effectively causes a wrapping
+  around the APA.
+\item[wire segment] or simply \textbf{segment}, counts the wires in a
+  conductor starting with segment 0 as the wire attached to the top of
+  the APA.
+\item[wire plane] collects all wires on one side of an APA which run
+  parallel to each other.
+\item[wire face] each side of an APA is labeled ``inner'' or ``outer''
+  to reflect whether it faces inward to or outward from the general
+  center of the detector.  Each of two wire faces has a stack of three
+  parallel wire planes.  Here, these are labeled, in the order in
+  which the drifting electrons encounter them, ``U'', ``V'' and ``W''
+  (engineering drawings typically label this latter plane ``X'' and
+  some offline software labels it ``Y'').
+\end{description}
+
+The wire conductor is attached to the top of the APA and starting from
+that point the channel-oriented elements are:
+
+\begin{description}
+\item[channel plane] is a logical plane taking the same labels as a
+  wire plane however is defined by the conductor and thus subject to
+  wrapping.  Each of the two U (and V) channel planes cover half of
+  each APA face.  Each of the two X channel planes cover one APA face
+  (no wrapping).
+\item[channel face] is also labeled ``inner'' or ``outer'' and
+  collects the three channel planes of conductors which terminate on a
+  given side of an APA.
+\item[channel board] each channel face is divided into a line of ten
+  boards (actually assemblies of several types of boards).  Into each
+  board goes 40, 40 and 48 conductors from the U, V and W channel
+  planes of the associated channel face.
+\item[channel group] each channel board divides its 128 conductors
+  into eight groups of 16 channels.  Strictly, there is also a
+  subgroup division due to two internal connectors being used but this
+  will be neglected here.
+\item[channel] finally a each of the 16 conductors in a channel group
+  is fed into one of the 16 channels on the front-end (FE) ASIC for
+  amplification and shaping and from there to one of one of the 16
+  channels of the ADC ASIC.
+\item[...] \fixme{continue through COLDATA, warm FPGA, DAQ}
+\end{description}
+
+The remaining subsection will describe in detail the numbering
+convention related to these parts.
+
+\subsection{Wire and Drift Coordinate Systems}
+
+In addition to the external coordinate system described above and
+shown in figure~\ref{fig:protodune} there are two more types of useful
+coordinate systems which are illustrated in
+figure~\ref{fig:coordsystems}.
+
+\begin{figure}[h]
+  \centering
+  \fixme{make this figure}
+  \caption{Illustration of \textit{drift cell coordinate system} and one of three \textit{wire plane coordinate systems}}
+  \label{fig:coordsystems}
+\end{figure}
+
+The first type is tied to the LAr drift cell ($dc$) and its APA face.
+It exploits the translational+rotational symmetry of \pD and the fact
+that, by construction, each LAr drift cell operates essentially
+independent from others in terms of the physics of electron drift and
+field response.  Using the $dc$ coordinate system allows large
+analysis and simulation codes to adopt a divide and conquer strategy
+and identical code to operate on six otherwise identical
+sub-detectors.
+
+The second type of coordinate system that is important, especially for
+simulation is one tied to the geometry of each wire plane.  The wire
+plane coordinate systems are the basis for calculating detector field
+response due to distributions of electrons drifting near a given wire
+plane.  This allows a dimensional reduction of a hard 3D problem into
+three easier 2D problems.  The rest of this section describes these
+two types of coordinate systems, how they interrelate and how they
+relate to the external coordinate system.
+
+As described above, a wire (segment) is a straight run of a conductor
+across one side of an APA.  The direction of a wire plane
+$i \in [\mbox{U}, \mbox{V}, \mbox{W}]$ and its wires, is given by a
+unit 3-vector $\hat{w}_i$.  The sign of this $\hat{w}_i$ is chosen to
+point in the direction that signals travel on the wires toward the
+electronics.  That is, it has a positive component along the $Y_{ext}$
+axis.
+
+All neighboring wires in a wire plane $i$ are nominally separated by a
+fixed distance as measured perpendicularly to their wire direction.
+This distance is called the \textit{wire pitch} and the
+pitch-direction, $\hat{p}_i$ is also represented by a unit 3-vector
+chosen to point generally toward the left if one faces a plane looking
+in the direction of electron drift.
+
+Along the pitch direction, the wires represent periodic values.  A
+choice of \textit{pitch phase} shifts these values by some amount
+along the pitch direction.  \fixme{What is this phase for each plane
+  and how was it chosen?  Given that, how best to define it? (relative
+  to origin?  relative to frame corner?)}
+
+With this convention for wire and pitch directions, their cross
+product $\hat{w}_i \times \hat{p}_i$, points counter to the nominal
+electron drift direction.  This \textit{anti-drift} direction is
+identified with that of the $X$-axis of a \textit{drift cell
+  coordinate system}, $X_{dc}$.  The $Y_{dc}$ axis of the drift cell
+coordinate system is parallel to the $Y_{ext}$-axis and to
+$\hat{w}_{\mbox{W}}$.  Finally, the $Z_{dc}$ axis points according
+their cross product which is also parallel to $\hat{p}_{\mbox{W}}$.
+
+The origin of the drift cell and the three wire plane coordinate
+systems are chosen to coincide with each other and their counterparts
+that are associate with the opposite side of the APA.  This origin is
+centered on the APA.  Longitudinally, is it half way between the the
+two physical faces of any given channel plane.  Transversely, it is at
+the geometric mean of the APA \textit{active area}.
+
+Table~\ref{tab:wire-drift-coord-params} summarizes the geometrical
+quantities relevant to these coordinate systems.
+
+
+\begin{table}[h]
+  \centering
+  \begin{tabularx}{1.0\linewidth}[h]{|r|l|}
+    angles & u,v,w \\
+    pitches & u,v,w \\
+    phases & u,v,w \\
+    wp axis directions & in dc coord \\
+    active width & \\
+    active height & \\
+  \end{tabularx}
+  \caption{Parameters relevant to drift cell and wire plane coordinate systems.}
+  \label{tab:wire-drift-coord-params}
+\end{table}
+
+\fixme{Describe how LArSoft has no coordinate systems like these (right?)}
+
+\subsection{Wire Numbering}
+
+The wires in a plane represent an array of objects.  Many algorithms
+require fast indexing into this array, especially when coupled with
+the associated wire plane coordinate system described above.  The
+origin of this array is chosen to be the wire with the most negative
+pitch as measured along the associated pitch direction.  This puts
+``wire 0'' of an plane at the right-most side or corner as determined
+by a viewer looking in the electron drift direction.
+
+\fixme{As far as I know, LArSoft doesn't have such numbering.  Yes?}
+
+\subsection{Channel Boards}
+
+As described above, a channel board accepts 40 U, 40 V and 48 W wires.
+Not mentioned yet but it also accepts 48 grid or ``G'' wires which are
+up-drift of the U plane and parallel to the W wires.  A channel board
+is actually a sequence or assembly of different boards:
+
+\begin{description}
+\item[wire board stack] one wire board for each of the four types of wires.
+\item[CR board] holds capacitors and resistors to provide isolation and wire bias voltage.
+\item[adapter board] adapts between the CR board and the cold electronics box.
+\item[front-end board] the front-end mother board in the cold
+  electronics box houses the eight FE amplifier and eight ADC ASICs
+  and the cold FPGA.\fixme{I need to add COLDATA, right?}
+\end{description}
+
+The electronics group has a convention~\cite{docdb2060} that covers
+just the context of one channel board.  Facing an APA and looking at
+an installed channel box this convention counts wires from left to
+right.  This convention makes a triple mapping between pins in the two
+96-pin Samtech connectors on the adapter board, a wire plane
+and number and an ASIC (FE or ADC) and its channel as summarized in
+table~\ref{tab:board-wire-chan}.
+
+\begin{table}[h]
+  \centering
+  \begin{tabular}[h]{|r|l|}
+    \hline
+    Element & values \\
+    \hline
+    Samtech connectors & J1, J2 \\
+    Channel planes & U, V, and W (called ``X'') \\
+    Board-local wire numbers & 1-40 (U and V), 1-48 (W) \\
+    ASICs (called ``group'') & 1-8 \\
+    ASIC-local channel number & 0-15 \\
+    \hline
+  \end{tabular}
+  \caption{Summary of board-level wire/channel mapping from reference~\cite{docdb2060}.}
+  \label{tab:board-wire-chan}
+\end{table}
+
+The electronics group convention does not cover how the boards
+themselves are numbered as they go along the top of both APA
+faces. \fixme{Right?  Who does?}.  Here, facing the APA, they line of
+boards on the nearest face are numbered from 1 -- 10 going left to
+right.  This is the same direction as the board-local wire numbers
+increase.  This allows an flat numbering convention for each channel
+plane to be defined as
+
+\begin{equation}
+  \label{eq:wire-attachment-numbers}
+  w_{i} = (B-1) * N_{i} + w_{B,i}
+\end{equation}
+
+Here, $w_{i}$ is a \textit{wire attachment number} for the given APA
+face and channel plane $i \in [\mbox{U}, \mbox{V}, \mbox{W}]$, $B$ is
+a board number, $N_{i} = (40, 40, 48)$ is the number of board-local
+wires for a given plane and $w_{B,i}$ is the board-local wire number
+for board $B$.  The ranges for these wire attachment numbers are then
+$w_{\mbox{V}}, w_{\mbox{U}} \in [1, 400]$ and
+$w_{\mbox{W}} \in [1, 480]$.  This convention applies to both faces of
+all APAs.
+
+The numbering of ASICs can be similarly flattened across an APA
+channel face by:
+
+\begin{equation}
+  \label{eq:adc-face-numbers}
+  ADC = (B-1) * 8 + ADC_{B}
+\end{equation}
+
+With $ADC_{B}$ being the board-local ADC number and $ADC \in [1-80]$.
+However, be cautious that there is a ``nonlinear'' mapping between an
+$ADC$ numbers and the wires its services.  A diagonal (in longitudinal
+drift time and wire-transverse space) track will alternately ``hit''
+pairs of ASICs in order: (2, 4), (3, 1), (5, 7) and finally (8, 6).
+
+
+
+\section{PDS}
+
+\begin{enumerate}
+\item paddles
+\item detectors
+\item cable terminations
+\item channels
+\item APAs
+\item \pD
+\end{enumerate}
+
+\section{Trigger}
+
+\begin{itemize}
+\item Run definitions and identifiers
+\end{itemize}
+
+\subsection{Beam}
+
+\begin{itemize}
+\item beam holes and angles
+\item run plan info (particle content, momenta)
+\end{itemize}
+
+\subsection{Cosmic Ray}
+
+\begin{itemize}
+\item paddle location and numbering
+\end{itemize}
+
+\subsection{DAQ}
+
+\begin{itemize}
+\item labels related to artDAQ nodes
+\item file naming
+\item payload schema?
+\end{itemize}
 
 \end{document}

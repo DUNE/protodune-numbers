@@ -23,24 +23,34 @@ Columns:
 import sys
 import numpy 
 import matplotlib.pyplot as plt
-from collections import namedtuple
+from collections import namedtuple, defaultdict
 
 # wid simply counts wire in order it is seen in the file
 # wip is wire-in-plane
-Wire = namedtuple("Wire", "wid wip ch cryo tpc plane beg end")
+Wire = namedtuple("Wire", "seg wid ch cryo tpc plane wip beg end")
 
 
 def load(infile):
     wires = list()
+
+    chan2wires = defaultdict(list)
+
     with open(infile) as fp:
-        for line in fp.readlines():
+        for wid, line in enumerate(fp.readlines()):
             chunks = line.strip().split()
-            numbers = map(int, chunks[:5]) + map(float, chunks[5:])
-            wire = Wire(len(wires),
-                        numbers[4], numbers[0],
-                        numbers[1], numbers[2], numbers[3],
-                        numpy.asarray(numbers[5:8]),
-                        numpy.asarray(numbers[8:11]))
+            numbers = map(int, chunks[:5]) + map(lambda x: 10.0*float(x), chunks[5:])
+            zmax = max(numbers[7], numbers[10])
+            wire = (zmax, wid, numbers)
+            chan = numbers[0]
+            chan2wires[chan].append(wire)
+
+    wires = list()
+    for ch,segs in chan2wires.items():
+        segs.sort()
+        for iseg, seg in enumerate(segs):
+            zmax, wid, numbers = seg
+            wire = Wire(iseg, wid, numbers[0], numbers[1], numbers[2], numbers[3], numbers[4],
+                            numbers[5:8], numbers[8:11])
             wires.append(wire)
     return wires
 
@@ -126,6 +136,17 @@ def plot_wires_plane_tpc(wires, plane, tpcs=(1,5,9), wire_sampling=10, text_samp
     plt.title("%s-plane, TPCs: %s" % (uvw[plane], str(tpcs)))
             
 
+def plot_wires(wires):
+    print ("Plotting %d wires" % len(wires))
+
+    for wire in wires:
+        p1, p2 = wire.beg, wire.end
+        x = numpy.asarray((p1[2], p2[2]))
+        y = numpy.asarray((p1[1], p2[1]))
+        plt.plot(x, y)
+        
+
+
 from matplotlib.backends.backend_pdf import PdfPages
 
 def wire_plots(wires, filename = "larsoftwires.pdf"):
@@ -153,8 +174,8 @@ def wire_plots(wires, filename = "larsoftwires.pdf"):
 
 
 
-def blah():
-    wires = load("WireDump_ProtoDUNESP_v2_2.txt")
-    plane1 = select_plane(wires,1)
-    t0p1 = select_tpc(plane1, 0)
-    return wires, plane1, t0p1
+
+def do_wire_plots(filename="WireDump_ProtoDUNESP_v2_2.txt", outfile="larsoftwires.pdf"):
+    wires = load(filename)
+    wire_plots(wires, outfile)
+
