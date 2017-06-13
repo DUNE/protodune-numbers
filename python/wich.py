@@ -128,26 +128,33 @@ class Rectangle(object):
         
         #print "toedge: p1:%s d1:%s" % (p1, d1)
 
-        xdir = d1.dot((1.0, 0.0))             # cos(theta_x)
-        xsign = xdir/abs(xdir)
-        ydir = d1.dot((0.0, 1.0))             # cos(theta_y) 
-        ysign = ydir/abs(ydir)
-
         corn = Point(0.5*self.width, 0.5*self.height)
 
-        dx = xsign*corn.x - p1.x
-        dy = ysign*corn.y - p1.y
-
-        tx = dx/d1.x
-        ty = dy/d1.y
-
-
-        if tx < ty:                           # closer to vertical side
-            jump = tx
+        xdir = d1.dot((1.0, 0.0))             # cos(theta_x)
+        if xdir == 0:
+            tx = None
         else:
-            jump = ty
+            xsign = xdir/abs(xdir)
+            dx = xsign*corn.x - p1.x
+            tx = dx/d1.x
 
-        return d1 * jump
+        ydir = d1.dot((0.0, 1.0))             # cos(theta_y) 
+        if ydir == 0:
+            ty = None
+        else:
+            ysign = ydir/abs(ydir)
+            dy = ysign*corn.y - p1.y
+            ty = dy/d1.y
+
+
+        if ty is None:
+            return d1*tx
+        if tx is None:
+            return d1*ty
+
+        if tx < ty:            # closer to vertical side
+            return d1 * tx
+        return d1 * ty
 
 
 
@@ -293,3 +300,31 @@ def protodune_plane_one_side(letter="u"):
                                   protodune_params['pitches'][iplane],
                                   rect)
     return rect,wires
+
+
+def celltree_geometry():
+    '''
+    Spit out contents of a file like:
+
+    https://github.com/BNLIF/wire-cell-celltree/blob/master/geometry/ChannelWireGeometry_v2.txt
+
+    columns of:
+    # channel plane wire sx sy sz ex ey ez
+    '''
+        
+
+    #Wire = namedtuple("Wire", "index Chan w1 h1 w2 h2")
+    # wire: (along_pitch, side, channel, seg, p1, p2)
+    aps = set()
+    sides = set()
+    channels = set()
+    for iplane, letter in enumerate("uvw"):
+        rect, wires = protodune_plane_one_side(letter)
+        print letter, len(wires)
+        for wire in wires:
+            ap, side, channel, seg, p1, p2 = wire
+            print wire
+            aps.add(ap)
+            sides.add(side)
+            channels.add(channel)
+    print len(aps),len(sides),len(channels)
