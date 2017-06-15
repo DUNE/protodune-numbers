@@ -13,98 +13,200 @@
 
 
 \author{Brett Viren}
-\date{\today (draft)}
+\date{\today \\ \textcolor{red}{(draft version 0.1)}}
 \title{Single-Phase protoDUNE TPC Numbers}
 \begin{document}
 
 \maketitle
 
 \begin{abstract}
-The numbering used for the single-phase protoDUNE TPC is described.
+  The numbers relevant to the Time Projection Chamber (TPC) data for
+  the single-phase protoDUNE experiment is described.  They are given
+  in terms of a hierarchy of the detector parts relevant to TPC data.
+  A set of global or ``flat'' numbering is proposed.  \fixme{Note,
+    while in draft, things are subject to change.}
 \end{abstract}
 
-
+%\newpage
+\tableofcontents
+\newpage
 \section{Overview}
 
 This document describes the numbers involved in labeling parts of the
-single-phase protoDUNE detector related to the TPC.  The document is
-ordered in the direction of information flow starting from ionization
-activity in the liquid argon and ending with raw data on disk.  For
-each stage stage of this flow, a numbering convention is
-proposed\footnote{While this document is in draft, expect these
-  conventions to change as we settle on a global optimum.}.  Other
-known, relevant conventions which differ are given for reference and
-to facilitate mappping.
+single-phase protoDUNE detector related to the TPC.  A family of
+labels are defined to refer to these detector parts in this note.
+These labels can not possibly coincide with those used to describe the
+part in every context. 
 
-A global orientation is adopted which takes approximate direction from
-the expected particle beam.  This is taken from conventions developed
-by the installation group and shown in table~\ref{tab:global}.
+The document addresses the parts roughly in the order that information
+flows starting from ionization activity in the liquid argon and ending
+with raw data on disk.  For each part, the numbering convention used
+by its producers is given.  In some cases, relevant numbering invented
+by others is given for reference and to facilitate transforming sets
+of numbers between the context presented in this note and others.
+
+The rest of this overview gives a description of the detector part
+hierarchy relevant to the numbering, an orientation of the detector
+and a family of coordinate systems which are used to describe the
+numbering.  Subsequent sections are devoted to the part numbering
+themselves.  The note ends with a section proposing ways to flatten
+the hierarchy of numbers in order to produce global numbering.
+
+\subsection{Detector Parts}
+\label{sec:parts}
+
+For the purpose of this note, the single-phase protoDUNE detector is
+considered to be composed of the following hierarchy of parts:
+
+\begin{description}
+\item[Detector] is a logical boundary for that which contains TPCs.
+\item[TPC] (aka ``drift cell'') is a volume of liquid argon bounded on one side by an Anode
+  Plane Assembly (APA) face and the other either by a Cathode Plane
+  Assembly (CPA) or by a detector wall.
+\item[APA] is logically split into two APA faces.
+\item[APA face] includes a number of active \textit{wire
+    planes} (among other things).
+\item[Wire plane] consists of a number of (nominally) parallel
+  \textit{wires}, spanning the APA face.  In the direction of drift
+  these planes are named here in alphabetical order: \textbf{U},
+  \textbf{V} and \textbf{W}.  The first two are also termed
+  ``induction'' planes and the last one
+  ``collection''.\footnote{Despite the fact that all three collect
+    induced signals.}
+\item[Wire] or more correctly a
+  \textit{wire segment} is one (nominally) straight run of a \textit{conductor}.
+\item[Conductor] is one or more sensitive wire segments, possibly
+  wrapping around an APA, which is ultimately attached to an input
+  electronics channel.
+\item[ASIC] is used generically here to mean either a front-end
+  electronic (FEE) amplifier ASIC or its paired ADC ASIC.
+\item[Channel] is associated with the amplification, digitization and
+  readout of one conductor.
+\item[FEMB] is the front-end motherboard holding a number of ASICs and
+  with a number of wires.
+\item[WIB] is a warm-interface board which is associated with a
+  number of FEMBs in an APA.
+\item[Readout] is either an RCE or a FELIX device which is associated
+  with a number of WIBs.
+\item[DAQ] is the distributed computer application based on artDAQ
+  which accepts data from readout devices, collates their fragments
+  based on trigger information, and writes the result to file.
+\end{description}
+
+\noindent The real detector is of course made up of many other parts
+and they are neglected for the purpose of this note.  Some terms
+defined here are to assist in describing the numbering and may not be
+used in all contexts.
+
+In this note \textit{local
+  numbering} describes how one part in this hierarchy relates to its
+parent and to sibling instances.  Local numbers may be duplicated as
+parent (or grandparent, etc) parts are replicated across the detector.
+As such an as-designed symmetry is assumed.  If any significant
+as-built deviations occur they must be understood and documented.  The
+system to handle these deviations is out of scope for this document.  
+
+\subsection{Orientation}
+
+The installation group defines a descriptive orientation labeling.  It
+is defined in approximate alignment with the direction of the particle
+beam from CERN.  It is reproduced in table~\ref{tab:global}.
 
 \begin{table}[htp]
   \label{tab:global}
   \centering
   \begin{tabular}[h]{|c|c|c|}
     \hline
-    \multicolumn{3}{|c|}{North aka Beam Left} \\
+    \multicolumn{3}{|c|}{North, aka ``Beam-Left''} \\
     \hline
     Upstream & Midstream & Downstream \\
     \hline
-    \multicolumn{3}{|c|}{South aka Beam Right} \\
+    \multicolumn{3}{|c|}{South, aka ``Beam-Right''} \\
     \hline
     \multicolumn{3}{c}{$\longrightarrow$ approximate beam direction $\longrightarrow$} \\    
   \end{tabular}
-  \caption{Global orientation labels.  Beam travels approximately left to
-    right.  Up-, mid- and down-stream may be abbreviated US, MS and
-    DS, respectively.  Beam-left (BL) and beam-right (BR) are on the
-    North and South sides of the detector, respectively}
+  \caption{Global orientation labels from the installation group.
+    Beam travels approximately left to right.  Up-, mid- and
+    down-stream may be abbreviated US, MS and DS, respectively.
+    Beam-left (BL) and beam-right (BR) are on the North and South
+    sides of the detector, respectively.}
 \end{table}
 
-In the following sections each part of the detector is described and
-numbered w.r.t. the part the ``contains'' it.  That is, they represent
-\textit{local numbering} which is assumed to replicate for as-designed
-numbering following the symmetry of the detector.  Any as-built
-deviations will need to be handled.  Following the sections describing
-local numbering is one describing a scheme to generate \textit{global
-  numbering} from the ensemble of local numbers.
+
+\subsection{Coordinate Systems}
+\label{sec:coordsys}
+
+A family of Cartesian coordinate systems is adopted in this note to
+assist in describing the numbering.  Their coordinates are defined and
+their semantic meanings are summarized as:
+
+\begin{description}
+\item[Global] $(x_g, y_g, z_g)$ is associated with
+  some ``lab frame'' but need not be defined further here.
+\item[Detector] $(x_d, y_d, z_d)$ is defined with respect to the
+  \textit{global} system and has axes aligned with the detector such
+  that $y_d$ points upward, counter to gravity, $z_d$ points
+  transverse to the nominal drift direction and approximately in the
+  direction of the beam and $x_d$ follows from the right-hand-rule and
+  is either parallel or anti-parallel to the nominal (local) electron
+  drift direction.  The origin of this coordinate system is left
+  unspecified here.
+\item[Chamber] $(x_c, y_c, z_c)$ is defined with respect to the
+  \textit{detector} coordinate system.  There is one chamber
+  coordinate system for each TPC.  For each chamber, the $y_c$
+  direction is parallel to that of the \textit{detector} system, the
+  $x_c$ direction is normal to the APA face associated with the
+  chamber and $z_c$ follows from right-hand-rule.  The origin of both
+  the $y_c$ and $z_c$ axes is chosen to be at the center of the active
+  area of the APA face.  The $x_c$ origin lies on the center plane
+  that divides the APA into two faces.
+\item[Wire] $(x_w, y_w, z_w)$ is defined with respect to a
+  \textit{chamber} coordinate system.  There is one wire coordinate
+  system associated with each wire plane in the APA face bounding the
+  chamber.  The $x_w$ axis is identified with $x_c$.  The $y_w$ axis
+  points along the wire in the direction (positive) current flows
+  toward the electronics.  The $z_w$ follows from the right-hand-rule
+  and points in the direction of the \textit{wire pitch}.  The origin
+  of the wire coordinate system is identified with that of the chamber
+  system.  They are related by a rotation but not a
+  translation.  Note, for W-planes, the wire and chamber coordinate
+  systems are identical.
+\end{description}
+
+\noindent These last two categories of coordinate systems are illustrated in Figure~\ref{fig:coords}.
+
+\begin{figure}[htp]
+  \centering
+  \includegraphics[width=0.8\textwidth]{test_pimpos_draw.pdf}
+  \caption{Illustration of the three wire coordinate systems relative to their parent chamber coordinate system, limited to the transverse plane.  For each plane \textcolor{red}{U in red}, \textcolor{blue}{V in blue} and \textbf{W in black}, the thin arrows are along the wire ($y_w$) direction, the thick arrows are along the pitch ($z_w$) direction. The axes of the plot represent the $y_c$ and $z_c$ axes.  Into the page are the common $x_c$ and the three $x_w$ for each plane.  Note: these coordinate systems are used to describe the numbering in this note and may not be in use in every context.}
+  \label{fig:coords}
+\end{figure}
 
 
-\section{TPC Drift Cells}
+\section{Chambers}
 
-The TPC has 6 ``large'' or ``central'' drift cells full of liquid
-argon bounded by a face of a CPA and an APA.  The opposite face of the
-APA is sensitive to activity that occurs in another ``thin'' or
-``edge'' drift cell giving a total of 12 drift cells.
+The detector is composed of two types of logical chambers (aka TPC
+drift cells).  There are 6 ``inner'', ``large'' or ``central''
+chambers that are bounded by an APA face and a CPA.  The face on the
+opposite side of their APA bounds a ``outer'', ``thin'' or ``edge''
+chamber which is further bounded by a detector wall.  The
+electrostatic field in this chamber is such that most ionized
+electrons produced therein are not detected.
 
-It is not expected that the raw data will contain TPC drift cell
-numbers, per se.  However, there is a one-to-one correlation between
-and APA face and a TPC drift cell.  The drift cell number is most
-important for offline simulation and reconstruction where, for
-example, one must label portions of activity of interaction that span
-multiple cells.
+The raw data contains no chamber numbers, per se.  However, the data
+must identify FEMBs one APA face or the other and faces are one-to-one
+correlated to chambers.  The important inner chamber numbers used here
+follow the APA numbers given below.  The outer chamber numbers follow
+with each one six higher than the chamber on the inner face of the
+shared APA and are listed in table~\ref{tabl:tpc}.
 
-Current LArSoft TPC numbering rasters a count in ``drift-major''
-ordering irrespective of the difference between edge and central TPCs.
-See table~\ref{tab:lstpc}.
-
-As that numbering does not give precedence to the most interesting,
-central TPCs an alternative is proposed here for adoption as official
-convention and with hopes that it is implemented in the next version
-of LArSoft.  To produce synergy with installation numbering the
-central TPCs are numbered by the installation numbers for the APAs
-(see table~\ref{tab:installapa}) which (partially) view them.  The
-``edge'' TPC cells are further counted in the same order.  This allows
-the numbers for the TPC drift cells on either side of an APA to differ
-by a fixed value of six.
-
-Note, there is no TPC 0 due to aligning with installation APA numbers.
-This has a beneficial side effect as allowing TPC number 0 to indicate
-error or other exceptional condition in the offline software.  It does
-mean that an APA number can not directly be used as an index into an
-array but simply must have unity subtracted.
-
+It's worth contrasting these numbers with the current LArSoft TPC
+numbering which rasters a count in ``drift-major'' order and
+irrespective of the difference between edge and central TPCs.  See
+table~\ref{tab:lstpc} for a corresponding description.
 
 \begin{table}[htp]
-  \label{tab:tpc}
+\begin{minipage}{0.4\textwidth}
   \centering
   \begin{tabular}[h]{|c|c|c|}
     \hline\hline
@@ -130,17 +232,12 @@ array but simply must have unity subtracted.
     \hline
     \hline
     \multicolumn{3}{c}{beam $\longrightarrow$} \\    
-
   \end{tabular}
-  \caption{Proposed TPC drift cell numbering convention which is based
-    on the convention used by the installation group for the APA
-    counts}
-\end{table}
-
-
-
-\begin{table}[htp]
-  \label{tab:lstpc}
+  \caption{The \textbf{chamber} (TPC drift cell) numbering which
+    follows the APA numbering used by the installation group.}
+  \label{tab:tpc}
+\end{minipage}\hfill
+\begin{minipage}{0.4\textwidth}
   \centering
   \begin{tabular}[h]{|c|c|c|}
     \hline\hline
@@ -168,39 +265,53 @@ array but simply must have unity subtracted.
     \multicolumn{3}{c}{beam $\longrightarrow$} \\    
   \end{tabular}
   \caption{Current LArSoft TPC numbering taken from dunetpc wiki~\cite{dunetpc-wiki}.  These are not proposed for convention. \fixme{Check is beam direction/number correlation is correct.}}
+  \label{tab:lstpc}
+\end{minipage}\hfill
 \end{table}
 
 
 \section{APA}
 
-\fixme{This is my current understanding, need checking from cold
-  electronics, WIB and DAQ experts.}  Each APA is an independent data
-source for the artDAQ based DAQ.  It is the ``Board Reader'' node of
-the DAQ which assigns APA number.  The APA numbering convention
-asserted here for the DAQ to follow matches the installation numbering
-convention and is described in table~\ref{tab:apa}.
+Each APA is an independent data source for the artDAQ based DAQ.  It
+is the ``Board Reader'' node of the DAQ which assigns APA
+number.\fixme{Right?}  The APA numbering of the installation group is
+described in table~\ref{tab:apa}.  As stated above, an inner chamber
+number matches the number of its APA.
 
 \begin{table}[htp]
   \label{tab:apa}
   \centering
   \begin{tabular}[h]{|c|c|c|}
     \hline
-    6 & 5 & 4 \\
+    \hline
+    edge & edge & edge \\
+    \hline
+    APA-6 & APA-5 & APA-4 \\
+    \hline
+    &&\\
+    central & central & central \\
+    &&\\
     \hline
     \hline
-    3 & 2 & 1 \\
+    &&\\
+    central & central & central \\
+    &&\\
+    \hline
+    APA-3 & APA-2 & APA-1 \\
+    \hline
+    edge & edge & edge \\
     \hline
     \hline
     \multicolumn{3}{c}{beam $\longrightarrow$} \\    
 
   \end{tabular}
-  \caption{Proposed APA numbering numbering convention which matches that used by the installation group.}
+  \caption{Proposed APA numbering numbering convention which matches that used by the installation group.  The \textit{central} and \textit{edge} liquid argon volumes are so labeled.}
 \end{table}
 
 
-\section{APA Faces}
+\subsection{APA Faces}
 
-Each APA has two faces.  The face continuing wires which are sensitive
+Each APA has two faces.  The face containing wires which are sensitive
 to activity in the ``central'' drift cell may be referred to as the
 ``main'' or ``inner'' face and takes a face number 0.  The ``other''
 or ``edge'' face takes number 1.  This is illustrated in
@@ -208,11 +319,11 @@ table~\ref{tab:faces}.
 
 
 \begin{table}[htp]
-  \label{tab:apa}
+  \label{tab:faces}
   \centering
   \begin{tabular}[h]{|c|}
     \hline
-    edge drift cell\\
+    edge\\
     \hline
     \hline
     outer face: 1\\
@@ -222,28 +333,31 @@ table~\ref{tab:faces}.
     inner face: 0 \\
     \hline
     \hline
-    central drift cell \\
+    \\
+    central \\
+    \\
     \hline
     \multicolumn{1}{c}{beam $\longrightarrow$} \\
 
   \end{tabular}
   \caption{APA face numbering, drawn for a beam-left APA.  A
     180$^\circ$ rotation is applied to describe APAs on the beam-right
-    side of the detector.}
+    side of the detector.  Face 0 is always associated with a central TPC, face 1 is associated with an edge chamber.}
 \end{table}
 
 
 \section{Wires}
 
-A wire \textit{conductor} is an electrically contiguous run of
-conducting material which feeds in to one electronics channel.  Where
-a conductor spans an APA face along a straight line it is called a
-wire \textit{segment} or just \textit{wire}.
+As described in section~\ref{sec:parts}, a wire \textit{conductor} is
+an electrically contiguous run of conducting material which feeds in
+to one electronics channel.  Where a conductor spans an APA face along
+a nominal straight line it is called a \textit{wire segment} or simply
+a \textit{wire}.  Three (sensitive) parallel wire planes are stacked
+on the APA face.  A subset of the wires for each wire plane of one
+APA face is shown in Figure~\ref{fig:wires}.  Only one in twenty wires
+are shown.
 
-The wires for one face of one APA are shown in Figure~\ref{fig:wires}.
-Only one in twenty wires are shown.
-
-\section{Segment in a conductor}
+\subsection{Segment in a conductor}
 
 Because the conductors that contribute to ``induction'' wire planes
 wrap around the APA they may have up to three wire segments while the
@@ -251,57 +365,49 @@ conductors which make up a ``collection'' wire plane have a single
 segment.  These segments are counted starting from zero at the point
 where they attach to the \textit{wire boards} at the top of an APA
 face.  The segment number is indicated by the thickness of the line in
-Figure~\ref{fig:wires}.  
+Figure~\ref{fig:wires}.  There are various ways that wires must be
+numbered and they are described in the following subsections,
+referring to this figure.
 
 \begin{figure}[htp]
   \centering
-  \includegraphics[width=\textwidth]{wires-20.pdf}
-  \caption{The wire (segments) for each wire plane on one face of one APA for protoDUNE.  Increasing width of the wire indicates increasing segment number (0, 1 or 2) and the color indicates increasing wire number from blue to red.  Only one of every twenty wires are shown. The Y coordinate points opposite of gravity.  The unlabeled X coordinate is into the page and is counter to the drift direction.  Z follows from the right-hand-rule.  \fixme{Check that U/V directions are correct.}}
+  \includegraphics[width=\textwidth,clip,trim=0 3cm 0 3cm]{wires-20.pdf}
+  \caption{The wire (segments) for each wire plane on one face of one APA for protoDUNE.  Increasing line width indicates increasing \textbf{segment number} $\in$ (0, 1 or 2).  The color indicates increasing \textbf{wire index} from blue to red.  Only one of every twenty wires are shown. The Y coordinate points opposite of gravity.  The unlabeled X coordinate runs into the page and is counter to the drift direction.  Z follows from the right-hand-rule.  \fixme{Check that U/V are not swapped.}}
   \label{fig:wires}
 \end{figure}
 
-\section{Wires in a plane.}
 
-Wires in one plane provide a local orthogonal Cartesian coordinate
-system that is useful for simulation and reconstruction.  The basis of
-this coordinate system is composed of unit vectors in the following
-directions, in order:
+\subsection{Wires indices}
 
-\begin{description}
-\item[$v_1 \equiv v_d$] The anti-drift direction, which is same as the positive X direction local to the drift cell.
-\item[$v_2 \equiv v_w$] The direction along the wire toward the input to the electronics.
-\item[$v_3 \equiv v_p$] The direction along the wire pitch.
-\end{description}
+Wire indices count wire segments in one plane in the the pitch
+direction of the plane.  The count starts from 0 at the smallest (most
+negative) $z_w$ (section~\ref{sec:coordsys}).  In
+Figure~\ref{fig:wires}, increasing wire index is represented by the
+colors transitioning from blue to red.
 
-These are ordered such that the right-handed cross product
-$v_d \times v_w = v_p$ holds.  A rotation transform relates this basis
-with one associated with another orthogonal coordinate system attached
-to the local drift cell.  Each wire plane coordinate system (for a
-given APA face) shares the X direction ($v_d$) with the local drift
-cell coordinate system.  The Y coordinate points counter to gravity
-and Z follows from the right hand rule.
+\subsection{Wire segment index}
 
-Teh pitch position of a wire increases generally as Z increases.  In
-Figure~\ref{fig:wires} pitch increases as the color transitions from
-blue to red.
+The segments that make up a whole conductor are counted starting at
+zero from the segment directly attached to a channel input.  The
+``collection'' plane wires all have segment index 0.  The conductors
+in the wrapped ``induction'' planes may have a maximum segment index
+of either 1 or 2.  Increasing segment index is represented by
+thickening lines in figure~\ref{fig:wires}.
 
-When ordered by pitch, the wires in a plane are given an index.  This
-\textit{wire pitch index} counts starting from 0 at the smallest pitch
-(most negative Z).
+\subsection{Wire attachment numbers}
 
-\section{Wire attachment numbers}
-
-All segment-0 wires in a given plane on one face of one APA attach to
-ten \textit{wire boards} mounted at the top of the APA frame.  Their
-\textit{wire attachment points} for each plane form an ordered and
-regular line.  In order to match the local numbering convention of the
-electronics (next sections) the \textit{wire attachment numbers} count
-start from 1 and advance as one goes left-to-right facing the APA.
-This means that they increase with decreasing Z.  Note: the wire
-attachment numbering starts counting from 1 to match the convention
-used by the electronics. \fixme{The ordering with Z here is from decoding
-  drawings and may be swapped!  If so, the numbering directions that
-  follow the WAN numbering also need swapping.}
+All wires with zero segment index (segment-0 wires) in a given plane
+on one face of one APA attach to one of the ten \textit{wire boards}
+mounted at the top of the APA frame.  Their \textit{wire attachment
+  points} for each plane form an ordered and regular line. 
+To match the local numbering convention of the electronics (next
+sections) the \textit{wire attachment numbers} count start from 1 and
+advance as one goes left-to-right facing the APA.  This means that
+they increase with decreasing Z.  Note: the wire attachment numbering
+starts counting from 1 to match the convention used by the
+electronics. \fixme{The ordering with Z here is from decoding drawings
+  and may be swapped!  If so, the numbering directions that follow the
+  WAN numbering also need swapping.}
 
 \begin{table}[htp]
   \centering
@@ -313,11 +419,11 @@ used by the electronics. \fixme{The ordering with Z here is from decoding
     \hline
     0/W & 480 & 1 \\
     \hline
-    outer face & $Z<0$  & $Z>0$\\
+    outer face & $z_c<0$  & $z_c>0$\\
     \hline
     \multicolumn{3}{|c|}{APA frame}\\
     \hline
-    inner face & $Z>0$ & $Z<0$\\
+    inner face & $z_c>0$ & $z_c<0$\\
     \hline
     0/W & 1 & 480 \\
     \hline
@@ -326,13 +432,18 @@ used by the electronics. \fixme{The ordering with Z here is from decoding
     2/U & 1 & 400 \\
     \hline
   \end{tabular}
-  \caption{Illustration of wire attachement numbers for one APA.  Each wire plane attaches in a line of points at the top of the APA.  These points are counted starting from 1 to match electronics convention and increase as one decreases in the local Z coordinate.  The numbering is $180^\circ$ rotationally symmetric.}
+  \caption{Illustration of wire attachement numbers for one APA.  Each wire plane attaches in a line of points at the top of the APA.  These points are counted starting from 1 to match electronics convention and increase as one decreases in the local $z_c$ coordinate.  The numbering is $180^\circ$ rotationally symmetric.}
   \label{tab:wan}
 \end{table}
 
-\section{Cold Electronics}
+\section{Electronics}
 
-Each wire segment zero attaches to a \textit{wire board}.  There are
+In this note, the electronics consist of all parts carrying signals,
+initially analog, from segment-0 wires to, finally digital, the DAQ.
+
+\subsection{ASICs}
+
+Each segment-0 wire attaches to a \textit{wire board}.  There are
 ten wire boards per each APA face.  These are numbered in the same
 direction as the wire attachment numbers as shown in table~\ref{tab:wireboards}
 
@@ -343,11 +454,11 @@ direction as the wire attachment numbers as shown in table~\ref{tab:wireboards}
     \hline
      9 & -- & 0 \\
     \hline
-    outer face & $Z<0$  & $Z>0$\\
+    outer face & $z_c<0$  & $z_c>0$\\
     \hline
     \multicolumn{3}{|c|}{APA frame}\\
     \hline
-    inner face & $Z>0$ & $Z<0$\\
+    inner face & $z_c>0$ & $z_c<0$\\
     \hline
     0 & -- & 9 \\
     \hline
@@ -369,21 +480,23 @@ table~\ref{tab:wireboard} matching reference~\cite{docdb2060-v3-adaptor-board-0}
     1 & V & 1 -- 40 \\
     0 & U & 1 -- 40 \\
   \end{tabular}
-  \caption{Local wire board wire attachment numbering.  Numbers increase in the same direction as wire attachment numbering which is in decreasing Z.}
+  \caption{Local wire board wire attachment numbering.  Numbers
+    increase in decreasing $z_c$.  Their numbers go in the same direction as
+    wire attachment numbers.}
 \end{table}
 
-Each wire board has associated a front-end motherboard (FEMB) with
-eight FEE amplifier and ADC ASIC pairs numbered 1-8.  Each pair of
-ASICs has 16 channels numbered 0-15.  The mapping from local wire
-board attachment number to ASIC and local ASIC channel numbers
-involves a nontrivial map.  This map is exhaustively given in
-reference~\cite{wirechmap} and reproduced in a matrix form in
-table~\ref{tab:wirechmap}.
+\noindent Each wire board has associated a front-end motherboard
+(FEMB) with eight FEE amplifier and ADC ASIC pairs numbered 1-8.  Each
+pair of ASICs has 16 channels numbered 0-15.  The connection from local
+wire board attachment number to ASIC number and its local ASIC channel
+numbers are nontrivial.  They are exhaustively given in
+reference~\cite{wirechmap} and concisely reproduced in a matrix form
+in table~\ref{tab:wirechmap}.
 
-This association between the numbers of an ASIC and its channel with a
-local wire board wire identifier repeats ten times as one goes down
-one top face of an APA.  This per-face pattern repeats on the opposite
-face, obeying a $180^\circ$ rotational symmetry.
+The associations represented in this matrix repeat ten times as one
+goes down the top of one face of an APA.  This per-face pattern
+repeats on the opposite face, obeying a $180^\circ$ rotational
+symmetry.
 
 \begin{table}[htp]
   \label{tab:wirechmap}
@@ -414,21 +527,26 @@ ch15 & \textcolor{black}{w13} & \textcolor{black}{w01} & \textcolor{red}{u20} & 
 \end{tabular}
 
 
-  \caption{Map between local wire board numbers and ADC and their channel numbers with U plane wires in \textcolor{red}{red} and V plane wires in \textcolor{blue}{blue}.  This single FEMB contains 128 wires, 40 in U and V planes and 48 in W.  This pattern of connectivity repeats 10 times down the top of the APA frame.}
+  \caption{The per-FEMB connections between ASIC number (columns), ASIC channel (rows) and the local numbering for wires feeding into the FEMB.  Wires are identified by a local, per-plane count.  Counts are \textcolor{red}{1-40 for U plane and marked in red}, \textcolor{blue}{1-40 for V plane and marked in blue} and \textbf{1-48 for W plane and marked in black}.  As this is for one FEMB, this pattern is applied sequentially 10 times down the top of the APA frame for each APA face.}
 \end{table}
 
-\section{Warm Interface Boards}
+\subsection{Warm Interface Boards}
 
 The data from the 20 FEMBs reading out both faces of one APA feed into
 five warm interface boards (WIB).
 
-\fixme{What is the connection map here?}
+\fixme{What are the connections here?}
 
 \fixme{Where and in what manner does an FEMB get numbered?  Is it indeed the WIB that stamps one FEMB's data with an FEMB number?}
 
 \fixme{Does a WIB know which WIB it is?}
 
-\section{RCE and FELIX}
+\section{DAQ}
+
+For the purpose of this note, the DAQ includes the dedicated readout
+hardware (RCE and FELIX) and the distributed artDAQ application.
+
+\subsection{RCE and FELIX}
 
 \fixme{There are two RCEs per APA.  How do they read out 5 WIBs?}
 
@@ -436,11 +554,10 @@ five warm interface boards (WIB).
 
 \section{Global Numbering}
 
-The numbering conventions above are all local to a unique unit of the
-detector.  As such a collection of different numbers are needed to
-uniquely identify the smallest units.  With some redundancy, the list
-of quantities that can be specified are summarized from the above
-sections as:
+Each numbering given above is local to a unique part of the detector.
+As such a hierarchy of numbers is required to uniquely identify a
+specific part.  With some redundancy, the list of quantities that may
+be specified are summarized from the above sections as:
 
 \begin{itemize}
 \item $G_{tpc}$ global TPC number (central: 1-6 and edge: 7-12)
@@ -448,25 +565,27 @@ sections as:
 \item $L_{face}$ local APA face (0,1)
 \item $L_{wib}$ local WIB number (5, numbered like ??)
 \item $L_{femb}$ local FEMB number on one face (1-10)
-\item $L_{asic}$ local ASIC (pair, either FEE amp or ADC) on FEMB (1-8)
+\item $L_{asic}$ local ASIC (pair, either FEE amplifier or ADC) on FEMB (1-8)
 \item $L_{ch}$ local channel on ASIC (0-15)
-\item $L_{plane}$ local wire plane holding (0/U, 1/V, 2/W).
-\item $L_{seg}$ local wire segment number in conductor (W always 0, U/V $\in$ 0,1,2)
+\item $L_{plane}$ local wire plane in face (0/U, 1/V, 2/W).
+\item $L_{seg}$ local wire segment index in conductor (W always 0, U/V $\in$ 0,1,2)
 \item $L_{pitch}$ local wire pitch index in plane
 \item $L_{wan}$ local wire attachment number on face of APA (U/V:1-400, W:1-480)
 \end{itemize}
 
-The mapping between these numbers are very ``shuffled'' due to wire
-wrapping, ASIC-wire channel map, multiple APAs and the dichotomy of
-``inner'' and ``outer'' faces.  There are also multiple levels in this
-map which are interesting to access.  As such there is clearly no
-ideal transformation to produce some a single global number suitable
-for all parts.  Any choice for such a global number will be unsuitable
-for some subset of use cases.  Forcing this choice is not a good
-strategy.
+The connections between these numbers are very ``shuffled'' due to
+wire wrapping, ASIC-wire channel connections, FEMB-WIB cable
+connections, multiple APAs and the dichotomy of ``inner'' and
+``outer'' faces.  There are also multiple levels in this hierarchy
+which are interesting to access.  As such there is clearly no ideal
+transformation to produce some a single global number suitable for all
+parts and all contexts.  Any choice for such a global number will be
+unsuitable for some subset of use cases.  This note makes no proposal
+for one single convention.
 
-Rather, a family of global numbering conventions is proposed.  In a
-top-down order one obvious flattening presents itself:
+Rather, it suggests one possible convention and as a family of global
+numbering conventions which traverse the hiearchy.  Going in top-down
+order, one obvious flattening presents itself:
 
 \[  G_{face} = 1 + (G_{apa}-1) + 2\times L_{face} = G_{tpc} \in (1-12) \]
   
@@ -485,13 +604,32 @@ attachment number $L_{wan}$ can be constructed similarly to $G_{ch}$.
 
 \fixme{Type out $L_{wan}$.}
 
-\section{What else?}
+\section{Concluding remarks}
 
-t.b.d.
+This note describes the numbers used by the makers of those detector
+parts of the single-phase protoDUNE experiment related to TPCs.  Such
+numbers are necessarily \textit{local} (as defined in this note).  In
+addition to these, some intermediate and global numbering conventions
+are proposed.
 
+What remains are two substantial tasks.  \fixme{A third substantial
+  task is fixing all the fixmes in this draft.}  First, a system is
+needed which represents these as-designed numbers in machine readable
+form.  Starting from this ideal basis, methods to identify and record
+deviations from the ideal are needed.  Such deviations will occur, be
+discovered and possibly be rectified all on differing time scales and
+the system must accommodate that.  From the basis and the recorded
+deviations it must be possible to produce and reproduce the full local
+number hierarchy and at least the more popular flattened
+transformations for our state of knowledge at any given time.
 
-
-
+The second substantial effort is to develop and apply transformations
+of these sets of numbers to sets which are suitable for a given
+problem domain or context.  A main example of this is to transform
+addresses in the raw data to alternatives which follow conventions and
+assumptions that have become baked into LArSoft code.  Other analyses,
+monitoring, data processing, engineering will likely also require
+their own unique transformations.
 
 
 \end{document}
