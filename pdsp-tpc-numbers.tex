@@ -13,7 +13,7 @@
 
 
 \author{Brett Viren}
-\date{\today \\ \textcolor{red}{(draft version 0.2)}}
+\date{\today \\ \textcolor{red}{(draft version 0.3)}}
 \title{Single-Phase protoDUNE TPC Numbers}
 \begin{document}
 
@@ -571,25 +571,80 @@ The five Warm Interface Boards (WIB) connect to 20 FEMBs on each APA.
 Each WIB has a unique IP address derived from crate and slot addresses
 for slow-control.  The four serial lines from one cold FPGA are input
 to a WIB.  The WIB multiplexes these into one output fiber.  In total,
-there are four output fibers, one for each cold FPGA input.
+there are four output fibers, one for each cold FPGA input.  It is
+assume that the WIB stamps the outgoing data with numbers for:
 
-\fixme{I can find no FEMB-WIB connectivity
-  graph.  What is here is a proposal.}  The WIBs are numbered by their
-slots in the flange: 1-5.  Each WIB is connected to a $2\times 2$
-block of FEMBs as seen looking down at the top of an APA.  The WIB
-numbers the attached FEMBs 1-4.  FEMB~1 services the inner face and is
-left-most when looking that APA face.  FEMB~2 is to the right.  FEMB~3
-is behind FEMB~2 on the outer APA face and FEMB~4 is next to it and
-behind FEMB~1.  \fixme{Add drawing.}
+\begin{itemize}
+\item \textbf{WIB Crate \#} (which corresponds to APA)
+\item \textbf{WIB \# in crate} (1-5)
+\item \textbf{WIB connector \#} (1-4, corresponding to output fiber number)
+\end{itemize}
 
-This numbering gives special consideration to the important inner APA
-face by giving all of its WIB-local FEMBs numbers as 1 and 2.  It also
-follows the general ordering of wire attachment and FEMB numbering on
-either face so that WIB-local FEMB numbers increase as their face's
-wires and FEMBs do.
+I can find no FEMB-WIB connectivity graph.  What is give here are two
+proposals which are good from the point of view of developing and
+viewing online monitoring plots which will use these raw data numbers
+and in keeping the mapping from these numbers to offline numbers
+simple and regular.  
+
+\textbf{Proposal 1} for the FEMB -- WIB connection is slightly
+preferred and is shown in table~\ref{tab:femb-wib-1}.  It groups FEMBs
+into \textbf{WIB--major} order, striping neighboring FEMBs across the
+same connector on different WIBs.  This means half of one face of one
+APA is grouped on one WIB connector number.
+
+\begin{table}[htp]
+  \label{tab:femb-wib-1}
+  \centering
+  \begin{tabular}[h]{|c|c|c|c|c|c|c|c|c|c|}
+    \hline
+    \multicolumn{10}{|c|}{Cryostat wall} \\
+    \hline
+    WIB 5 & WIB 4 & WIB 3 & WIB 2 & WIB 1 & WIB 5 & WIB 4 & WIB 3 & WIB 2 & WIB 1 \\
+    \multicolumn{5}{|c|}{WIB connector 4} & \multicolumn{5}{c|}{WIB connector 3} \\
+    \hline
+    \multicolumn{10}{|c|}{APA Frame} \\
+    \hline
+    \multicolumn{5}{|c|}{WIB connector 1} & \multicolumn{5}{c|}{WIB connector 2} \\
+    WIB 1 & WIB 2 & WIB 3 & WIB 4 & WIB 5 & WIB 1 & WIB 2 & WIB 3 & WIB 4 & WIB 5\\
+    \hline
+    \multicolumn{10}{|c|}{TPC} \\
+    \hline
+  \end{tabular}
+  \caption{FEMB-WIB connectivity proposal \#1.  The table shows mapping from the $2\times10$ physical FEMB location on the top of the APA to WIB addresses following a $1\times5\times4$ layout.}
+\end{table}
 
 
-\fixme{What is the actual intended FEMB-WIB connection graph?}
+
+\textbf{Proposal 2} for the FEMB -- WIB connection is less preferred
+but is the only other possible layout which provides the high degree
+of hierarchical symmetry.  If looking at the WIB flange, the two
+proposals are similar to a matrix transpose of each other.  This
+proposal uses \textbf{WIB-connector-major} ordering of a group of
+FEMBs, striping a $2\times2$ block of FEMBs across the connectors of
+one FEMB.  This proposal is illustrated  in table~\ref{tab:femb-wib-2}.
+
+
+\begin{table}[htp]
+  \label{tab:femb-wib-2}
+  \centering
+  \begin{tabular}[h]{|c|c|c|c|c|c|c|c|c|c|}
+    \hline
+    \multicolumn{10}{|c|}{Cryostat wall} \\
+    \hline
+    WC 4 & WC 3 & WC 4 & WC 3 & WC 4 & WC 3 & WC 4 & WC 3 & WC 4 & WC 3 \\
+    \multicolumn{2}{|c|}{WIB 1} & \multicolumn{2}{c|}{WIB 2} & \multicolumn{2}{c|}{WIB 3} & \multicolumn{2}{c|}{WIB 4} & \multicolumn{2}{c|}{WIB 5} \\
+    \hline
+    \multicolumn{10}{|c|}{APA Frame} \\
+    \hline
+    \multicolumn{2}{|c|}{WIB 1} & \multicolumn{2}{c|}{WIB 2} & \multicolumn{2}{c|}{WIB 3} & \multicolumn{2}{c|}{WIB 4} & \multicolumn{2}{c|}{WIB 5} \\
+    WC 1 & WC 2 & WC 1 & WC 2 & WC 1 & WC 2 & WC 1 & WC 2 & WC 1 & WC 2 \\
+    \hline
+    \multicolumn{10}{|c|}{TPC} \\
+    \hline
+  \end{tabular}
+  \caption{FEMB-WIB connectivity proposal \#2.  The table shows mapping from the $2\times10$ physical FEMB location on the top of the APA to WIB addresses following a $2\times2\times5$ layout.  Here ``WC'' stands for ``WIB connector''.}
+
+\end{table}
 
 \fixme{Where and in what manner does data from one FEMB get numbered?  Is it indeed the WIB that stamps one FEMB's data with an FEMB number?}
 
