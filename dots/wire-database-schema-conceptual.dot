@@ -1,0 +1,125 @@
+digraph simple {
+	rankdir=LR;
+	graph [pad="0.0", nodesep=".2", ranksep=".8"];
+	
+	node[shape=record,penwidth=2];
+
+	# root
+	detector[label="<name>DETECTOR|<crates>crates|<anodes>anodes"];
+	
+	# mechanical 
+	anode[label="<name>ANODE\n2 faces|<faces>faces|<aid>aid|<crate>crate|<origin>origin"];
+	face[label="<name>FACE\n10 boards\n3 planes|<boards>boards|<planes>planes|<fia>fia|<driftdir>driftdir"];
+
+	# electrical
+	board[label="<name>BOARD\n8 chips\n40+40+48 conductors|<conductors>conductors|<chips>chips|<biw>biw|<bif>bif"];
+	chip[label="<name>CHIP\n16 chan|<channels>channels|<chob>chob"];
+	channel[label="<name>CHANNEL|<conductor>conductor|<chich>chich"];
+
+	# physical
+	conductor[label="<name>CONDUCTOR\n1-3 wires|<wires>wires|<cob>cob|<channel>channel"];
+	plane[label="<name>PLANE\nN wires\n|<wires>wires|<pif>pif|<wiredir>wiredir|<pitchdir>pitchdir|<origin>origin"];
+	wire[label="<name>WIRE|<wic>wic|<wip>wip|<ray>ray"];
+
+	# DAQ
+	# https://indico.fnal.gov/event/11578/material/slides/0?contribId=4
+	# Each WIB may have either 8x2.4Gbps or 2x9.6Gbps, x5->12GB/s
+	wib[label="<name>WIB\n4 boards|<boards>boards|<wic>wic"];
+	crate[label="<name>CRATE\n5 WIBs|<wibs>wibs|<cid>cid|<anode>anode"];
+
+	# geometry nodes
+	node[color=purple,penwidth=1];
+	ray[label="<name>RAY|<tail>tail|<head>head"];
+	vector[label="<name>VECTOR|<x>x|<y>y|<z>z"];
+
+	# join nodes
+	node[color=blue,penwidth=1];
+	
+	cob_join[label="<name>ConductorOnBoard|plane#, spot#|board_id|conductor_id"];
+	chob_join[label="<name>ChipOnBoard|chip#|board_id|chip_id"];
+	wic_join[label="<name>WiresInConductor|segment#|conductor_id|wire_id"];
+	wip_join[label="<name>WiresInPlane|wire#|plane_id|wire_id"];
+	chich_join[label="<name>ChannelInChip|channel#|chip_id|channel_id"];
+	fia_join[label="<name>FaceInAnode|face#|anode_id|face_id"];
+	pif_join[label="<name>PlaneInFace|plane#|face_id|plane_id"];
+	bif_join[label="<name>BoardInFace|board#|face_id|board_id"];
+	wicr_join[label="<name>WibInCrate|slot#|crate_id|wib_id"];
+	biw_join[label="<name>BoardInWib|connector#|wib_id|board_id"];
+	
+	aid_join[label="<name>AnodeInDetector|apa#|detector_id|anode_id"];
+	cid_join[label="<name>CrateInDetector|crate#|detector_id|crate_id"];
+	
+	{rank=same;
+		biw_join->bif_join[style=invis]}
+	
+	
+	{rank=same; conductor, channel}
+	{rank=same; board, plane}
+	{rank=same; cob_join, chob_join}
+
+	### edges
+
+	#indirect collection
+	edge[color=black,constraint=true,penwidth=2];
+
+	board:conductors->cob_join:name->conductor:name;
+	board:chips->chob_join:name->chip:name;
+	conductor:wires->wic_join:name->wire:name;
+	plane:wires->wip_join:name->wire:name;
+	chip:channels->chich_join:name->channel:name;
+	
+	face:boards->bif_join:name->board:name;
+	face:planes->pif_join:name->plane:name;
+	anode:faces->fia_join:name->face:name;
+
+	crate:wibs->wicr_join:name->wib:name;
+	wib:boards->biw_join:name->board:name;
+
+	detector:crates->cid_join:name->crate:name;
+	detector:anodes->aid_join:name->anode:name;
+
+	# direct back connects
+
+	edge[color=red,constraint=false,penwidth=1];
+
+	conductor:channel:e->channel:conductor;
+	channel:conductor->conductor:channel:e;
+
+	crate:anode:e->anode:crate;
+	anode:crate->crate:anode:e;
+
+	# indirect back connects
+	edge[color=darkgreen,constraint=true,penwidth=1,dir=back];
+
+	plane:name->wip_join:name;
+
+	edge[color=darkgreen,constraint=false,penwidth=1,dir=""];
+
+	chip:chob->chob_join:name->board:name;
+	channel:chich->chich_join:name->chip:name;
+	conductor:cob->cob_join:name->board:name[constraint=true];
+	wire:wic->wic_join:name->conductor:name;
+	wire:wip->wip_join:name[constraint=true];
+	board:bif->bif_join:name->face:name;
+	face:fia->fia_join:name->anode:name;
+	plane:pif->pif_join:name->face:name;
+	wib:wic->wicr_join:name->crate:name;
+	board:biw->biw_join:name->wib:name;
+	
+	crate:cid->cid_join:name->detector:name;
+	anode:aid->aid_join:name->detector:name;
+	
+	edge[color=purple,constraint=true,penwidth=1];
+	plane:origin->vector:name;
+	face:driftdir->vector:name;
+	plane:wiredir->vector:name;
+	plane:pitchdir->vector:name;
+	vector:name->ray:tail[dir=back];
+	vector:name->ray:head[dir=back];
+	ray:name->wire:ray[dir=back];
+	anode:origin->vector:name;
+	
+	edge[color=purple,constraint=false,penwidth=1];
+
+	
+}

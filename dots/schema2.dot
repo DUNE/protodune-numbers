@@ -1,0 +1,73 @@
+digraph simple {
+	rankdir=LR;
+	graph [pad="0.0", nodesep=".2", ranksep=".8"];
+	
+        # Detector elements
+	node[shape=record,penwidth=2];
+
+        detector[label="<name>Detector\n6 APAs|<apas>apas|<o>origin"];
+
+        apa[label="<name>APA\n5 slots\n2 sides|<wibs>wibs|<faces>faces|<origin>origin"];
+
+
+
+        wib[label="<name>WIB\n4 connectors|<boards>boards"];
+        board[label="<name>Board\n3 rows\n40,40,48 spots\n8 chips|<conductors>conductors|<chips>chips"];
+        chip[label="<name>Chip\n16 channels|<channels>channels"];
+        channel[label="<name>Channel|<conductor>conductor"];
+        conductor[label="<name>Conductor\n1-3 segments|<segments>segments|<channel>channel"];
+        face[label="<name>Face\n10 CE boxes\n3 planes|<boards>boards|<planes>planes|<normal>normal"];
+        plane[label="<name>Plane\nN wires|<wires>wires|<wiredir>wiredir|<pitchdir>pitchdir|<origin>origin"];
+        wire[label="<name>Wire|<ray>ray"];
+
+        node[shape=record,color=purple];
+        
+        vector[label="<name>Vector|<x>x|<y>y|<z>z"];
+        ray[label="<name>Ray|<tail>tail|<head>head"];
+
+        {rank=same; board,plane}
+        {rank=same; chip}
+        {rank=same; conductor, channel, vector, ray}
+
+	edge[dir=both];
+
+        detector:apas->apa:name[label="apa#"];
+
+        apa:wibs->wib:name[label="slot#"];
+        apa:faces->face:name[label="side#"];
+
+
+        wib:boards->board:name[label="connector#"];
+        board:conductors->conductor:name[label="(row#, spot#)"];
+        board:chips->chip:name[label="chip#"];
+        chip:channels->channel:name[label="address#"];
+        conductor:segments->wire:name[label="segment#"];
+        plane:wires->wire:name[label="wire#"];
+        face:planes->plane:name[label="layer#"];
+        face:boards->board:name[label="box#"];
+
+
+
+        # one-to-one convenience connections
+	edge[constraint=false, color=red, arrowname="none"];
+        #conductor:channel:e->channel:conductor;
+        channel:conductor->conductor:channel:e;
+        
+        # geometry connections
+	edge[color=purple, constraint=false, dir=""];
+        detector:o->vector:name;
+        face:normal->vector:name;
+
+	edge[color=purple, constraint=true, dir=""];
+
+        wire:ray->ray:name;
+        
+        ray:tail:e->vector:name:e;
+        ray:head:e->vector:name:e;
+
+        apa:origin->vector:name;
+        plane:wiredir->vector:name;
+        plane:pitchdir->vector:name;
+        plane:origin->vector:name;
+        
+}

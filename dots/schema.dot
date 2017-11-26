@@ -1,0 +1,78 @@
+digraph simple {
+	rankdir=LR;
+	graph [pad="0.0", nodesep=".2", ranksep=".8"];
+	
+        # Detector elements
+	node[shape=record,penwidth=2];
+
+        detector[label="<name>Detector\n6 APAs|<apas>apas|<o>origin"];
+
+        apa[label="<name>APA\n1 crate\n1 anode|<crates>crates|<anode>anode"];
+        crate[label="<name>Crate\n5 WIBs|<wibs>wibs|<anode>anode"];
+        anode[label="<name>Anode\n2 faces|<faces>faces|<apa>apa|<crate>crate|<origin>origin"];
+
+        wib[label="<name>WIB\n4 boards|<boards>boards"];
+        board[label="<name>Board\n3 layers\n40,40,48 spots\n8 chips|<conductors>conductors|<chips>chips"];
+        chip[label="<name>Chip\n16 channels|<channels>channels"];
+        channel[label="<name>Channel|<conductor>conductor"];
+        conductor[label="<name>Conductor\n1-3 segments|<segments>segments|<channel>channel"];
+        face[label="<name>Face\n10 boards\n3 planes|<boards>boards|<planes>planes|<normal>normal"];
+        plane[label="<name>Plane\nN wires|<wires>wires|<wiredir>wiredir|<pitchdir>pitchdir|<origin>origin"];
+        wire[label="<name>Wire|<ray>ray"];
+
+        node[shape=record,color=purple];
+        
+        vector[label="<name>Vector|<x>x|<y>y|<z>z"];
+        ray[label="<name>Ray|<tail>tail|<head>head"];
+
+        {rank=same; crate,anode}
+        {rank=same; board,plane}
+        {rank=same; chip}
+        {rank=same; conductor, channel, vector, ray}
+
+	edge[dir=both];
+
+        detector:apas->apa:name[label="apa#"];
+
+        apa:crates->crate:name[label="1-1"];
+        crate:wibs->wib:name[label="slot#"];
+        anode:faces->face:name[label="face#"];
+        apa:anode->anode:apa[label="1-1"];
+
+
+        wib:boards->board:name[label="connector#"];
+        board:conductors->conductor:name[label="(layer#, spot#)"];
+        board:chips->chip:name[label="chip#"];
+        chip:channels->channel:name[label="channel#"];
+        conductor:segments->wire:name[label="segment#"];
+        plane:wires->wire:name[label="wire#"];
+        face:planes->plane:name[label="plane#"];
+        face:boards->board:name[label="board#"];
+
+
+
+        # one-to-one convenience connections
+	edge[constraint=false, color=red, arrowname="none"];
+        #conductor:channel:e->channel:conductor;
+        channel:conductor->conductor:channel:e;
+        anode:crate->crate:anode:e;
+        #crate:anode:e->anode:crate;
+        
+        # geometry connections
+	edge[color=purple, constraint=false, dir=""];
+        detector:o->vector:name;
+        face:normal->vector:name;
+
+	edge[color=purple, constraint=true, dir=""];
+
+        wire:ray->ray:name;
+        
+        ray:tail:e->vector:name:e;
+        ray:head:e->vector:name:e;
+
+        anode:origin->vector:name;
+        plane:wiredir->vector:name;
+        plane:pitchdir->vector:name;
+        plane:origin->vector:name;
+        
+}
