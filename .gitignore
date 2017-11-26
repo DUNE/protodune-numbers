@@ -4,7 +4,8 @@ auto
 *.fls
 *.log
 *.out
-*.pdf
 *.toc
 *.fdb_latexmk
 *.pyc
+pdsp-tpc-numbers.pdf
+cut.tex
