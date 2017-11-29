@@ -23,12 +23,13 @@
   \noindent The connectivity of detector elements relevant to TPC wire
   data from the single-phase protoDUNE experiment is described.  It is
   expressed as a directed graph of ordered edges.  Edges map to
-  connections between detector elements following numbering conventions
-  taken from the engineering designs for the hardware involved.  A
-  scheme for flattening this graph and producing a global numbering
-  convention is proposed.  The software to produce the graph is
-  described and a sample of the diagrams it generates are included for
-  validation purposes.
+  connections between detector elements following minimal and local
+  numbering conventions taken from the installation and engineering
+  designs for the hardware involved.  Schemes for flattening this
+  graph and producing global numbering conventions are proposed.
+  Software to produce a instances of connection graphs is described
+  and a sample of the diagrams it can generate are included for
+  illustration and validation purposes.
 \end{abstract}
 
 %\newpage
@@ -44,45 +45,46 @@ which has importance for analyzing and simulating the detector data.
 An \textit{edge} in the graph represents a logical or physical
 connection between two types of parts.  An edge which represents a
 parent/child relationship carries one or more \textit{attributes}
-which allow a parent's children to be ordered and to then associate
-their order with actual connections in the real detector.  As such,
-the nodes themselves do not hold attributes that provide identity.
-Rather, nodes are identified by their location in the graph relative to
-other nodes.  Some nodes do carry attributes which represent physical
-quantities such as their position in space.
+(typically, sequence indices) which allow a parent's children to be ordered and
+to then associate their order with actual connections in the real
+detector.  As such, the nodes themselves do not hold attributes that
+provide identity.  Rather, nodes are identified by their location in
+the graph relative to other nodes.  Some nodes do carry attributes
+which represent physical quantities such as their position in space.
 
 In determining the connectivity between nodes, the edges and their
-indices are chosen to follow engineering and design documents and
+index attributes are chosen to follow engineering and design documents and
 drawings.  This allows the graph representation to be independent of
 any global numbering convention while still correctly representing the
 design.  It also happens to allow representing connectivity which
 deviates from design as may arise from mistakes during cabling or with
 DAQ configuration.  As such are found and fixed, different graphs may
-be constructed to account and record the changes.
+be constructed to account for and record the changes.
 
-While the edge attributes assert a minimal local convention they do
-not preclude more prescriptive or global conventions to be defined as
-a function of the resulting graph.  Indeed, multiple useful
+While the edge attributes assert a minimal local numbering convention
+they do not preclude more prescriptive or global conventions to be
+defined as a function of the resulting graph.  Indeed, multiple useful
 conventions must likely emerge from this graph depending on the
 context in which the connection information is needed.  For example,
 when debugging hardware issues it will be best to have waveform data
-associated with a tuple of numbers (APA, WIB, WIB slot, board, chip,
-channel).  On the other hand, with reconstruction and simulation
-software it is important to identify a waveform with a wire segment
-described by a different tuple: (APA, face, plane, conductor,
-segment).  By the nature of the protoDUNE design, the mapping between
-these tuples is not trivial and requires a graph traversal.
+associated with a tuple of numbers (APA, WIB, WIB slot, front-end
+electronics board, preamp/ADC chip pair, and the chip's ``channel'').
+On the other hand, with reconstruction and simulation software it is
+important to identify a waveform with a wire segment described by a
+different tuple: (APA, face, plane, conductor, segment).  By the
+nature of the protoDUNE design, the mapping between these tuples is
+not trivial and requires a graph traversal.
 
-That said, it is also useful to develop conventions to provide a flat
-sequence of numbers which enumerate parts at some more global scale.
-For example, it is expected that numbering the 400, 400 or 480
-``spots'' where a conductor terminates on wire boards in one of the
-three planes, respectively, in an APA face will be a useful
-intermediate flat numbering scheme for producing visualizations of
-waveform samples vs time.  While the wrapping of the induction
-conductors will lead to some ambiguity this will give much more
-understandable views of the data than would plotting waveforms ordered
-by board-chip-channel.
+So, developing conventions to provide a flat sequence of numbers which
+enumerate parts at some more global scale is needed.  For example, it
+is expected that numbering the 400, 400 or 480 ``spots'' where a
+conductor terminates on wire boards in one of the three planes,
+respectively, in an APA face will be a useful intermediate flat
+numbering scheme for producing visualizations of waveform samples vs
+time to understand activity in the detector (``event displays'').
+While the wrapping of the induction conductors will lead to some
+ambiguity this will give much more understandable views of the data
+than would plotting waveforms ordered by board-chip-channel.
 
 The rest of this section defines the detector elements considered in
 the connectivity graph as well as the orientation labels and
@@ -98,10 +100,12 @@ connection graph is provided.
 
 Figure~\ref{fig:schema} shows a \textit{schema graph} which
 illustrates the node and edge types that are employed in the full
-detector element connectivity graph.  The full connectivity graph can
-be understood as an expansion of this schema graph over the
-multiplicities indicated in the nodes and following the connectivity
-ordering indicated by the protoDUNE design.
+detector element connectivity graph.  It also indicates labels for
+edge attributes which hold sequence indices.  The full connectivity
+graph can be understood as an expansion of this schema graph by
+iterating over these indices in ranges indicated by the multiplicities
+shown the node boxes while constrained by the actual connections
+defined by the protoDUNE design.
 
 \begin{figure}[h]
   \centering
@@ -421,14 +425,16 @@ on face-2.
 Each APA has a single warm electronics crate with five slots, each
 holding one WIB.  Each WIB has four connectors attaching a data cable
 from one board.  Power cables are not considered here but are expected
-to follow the data cable assignments shown.
+to follow the data cable assignments shown (and are depicted in Fig.~\ref{fig:wibflange}).
 
 Table~\ref{tab:femb-wib-1} shows the WIB-board connectivity map for a
-column of APAs.  Note the rotational symmetry between the pair and the
-``WIB-major'' ordering of the two dimensional array of 4 connectors
-$\times$ 5 WIBs.  Figure~\ref{fig:wibflange} shows a graphical
-visualization of their connections as well as the physical layout of
-the data connectors on the warm interface flange.
+column of APAs.  Note the rotational symmetry between the pair of APAs
+arises simply from keeping
+all APAs identical.  Also note the ``WIB-major'' ordering of the two
+dimensional array of: $[4\ \mbox{connectors} \times 5\ \mbox{WIBs}]$.
+Figure~\ref{fig:wibflange} shows a graphical visualization of their
+connections as well as the physical layout of the data connectors on
+the warm interface flange.
 
 \begin{table}[htp]
   \centering
@@ -471,24 +477,23 @@ the data connectors on the warm interface flange.
   \caption{FEMB-WIB connectivity for one column of APAs.  The mapping
     is performed in ``WIB-major'' order which wraps around the APA
     frame advancing the WIB connector number once for each half frame.
-    The pair of APAs exhibit $180^\circ$ \textbf{rotational symmetry}
-    so that the low numbered connectors (1 and 2) in every crate
-    service conductors attached on the face toward the central drift
-    volume and the high numbered (3 and 4) connectors service
-    conductors attached to the face toward the cryostat wall.  Each
-    column of APAs exhibit simple translational symmetry with their
-    neighbors.}
+    Because the APAs are constructed identically, after installation a
+    pair of APAs in the same column exhibit $180^\circ$
+    rotational symmetry so that the low numbered connectors
+    (1 and 2) in every crate will service the conductors attached on the face
+    toward the central drift volume and the high numbered (3 and 4)
+    connectors will service the conductors attached to the face toward the
+    cryostat wall.  Each column of APAs exhibit simple translational
+    symmetry with their neighbors.}
   \label{tab:femb-wib-1}
 \end{table}
 
-This layout allows for a simple mapping to be iterated over in code
-and in particular allows simple separation and enumeration of
-collection channels from each face.  A second layout based on
-$2 \times 2 \times 5$ blocks of boards was considered but was
-considered slightly less preferable due to the somewhat higher
-complexity.
-
-
+This WIB-major layout allows for simple iterations on WIB connector
+and WIB slot as part of iterating on the line of conductors attachment
+spots on a face.  A second layout based on $2 \times 2 \times 5$
+blocks of boards was considered.  Its connector-major is maybe more
+intuitive but mapping that pattern to the boards and their wires leads
+to somewhat higher complexity and  more convoluted iterations.
 
 
 \subsection{Board-Chip-Channel-Conductor}
